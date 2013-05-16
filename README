@@ -1,0 +1,12 @@
+The class OVH_APP is in the file ovh_app.py. I have included 2
+examples:
+
+- test_ovh.py: a simple command-line example
+- test_bottle.py a simple webapp relying on bottle framework. With an
+  app for sending text messages (SMS) and an other to display domain
+  names. 
+
+WARNING: The webapp is not secure and is vulnerable to cross-site
+scripting. I am not checking the user input and I believe one could
+try to call other API functions. This is there for simple
+demonstration only. Do not use the demo webapp on production.
