@@ -51,6 +51,24 @@ def cloud():
     else:
         get_credential()
 
+@route('/domains')
+@route('/domains/<domain>')
+def domains(domain=None):
+    CK = request.get_cookie('CK')
+    if CK:
+        try:
+            domains = app.get('/domains', CK)
+        except APIError as e:
+            if e.status_code == 403:
+                get_credential()
+        if domain == None:
+            return template('list_domains', domains=sorted(domains), url=request.url)
+        else:
+            ids = app.get('/domains/'+domain+'/resolutions', CK)
+            subdomains = [app.get('/domains/'+domain+'/resolutions/'+subid, CK) for subid in ids]
+            return template('domain_details', domain=domain, subdomains=subdomains)
+    else:
+        get_credential()
 
 application = raw_input("Application: ")
 applicationSecret = raw_input("Secret: ")
@@ -60,7 +78,9 @@ accessRules = [ { 'method': 'GET',
                 { 'method': 'POST',
                   'path': '/sms/*jobs'},
                 { 'method': 'GET',
-                  'path': '/cloud'}]
+                  'path': '/cloud'},
+                { 'method': 'GET',
+                  'path': '/domains*' } ]
 
 app = OVH_APP(application, applicationSecret, accessRules)
 
