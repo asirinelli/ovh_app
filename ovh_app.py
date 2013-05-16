@@ -24,6 +24,7 @@ class OVH_APP:
         self.secret = secret
         self.accessRules = accessRules
         self.url = url
+        self.drift = self.get_drift()
 
     def get(self, path, custumerKey):
         return self._ovh_req(path, "GET", custumerKey)
@@ -48,10 +49,14 @@ class OVH_APP:
         CK = q.json()['consumerKey']
         redirect = q.json()['validationUrl']
         return CK, redirect
-        
+
+    def get_drift(self):
+        t_ovh = int(requests.get(self.url+'/auth/time').text)
+        t_here = int(time.time())
+        return t_ovh - t_here
 
     def _ovh_req(self, path, req_type, CK, params=None):
-        now = str(int(time.time()))
+        now = str(int(time.time()) + self.drift)
 
         if params:
             data = json.dumps(params)
